@@ -18,7 +18,7 @@ no security settings).
 
 User needs to start Aapache HBase REST Server daemon.
 
-This extension needs Tcl 8.6 and tdom.
+This extension needs Tcl 8.6, tdom and tcllib base64 package.
 
 
 Interface
