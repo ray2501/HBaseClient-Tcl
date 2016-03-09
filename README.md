@@ -6,7 +6,7 @@ There are various ways to access and interact with [Apache HBase] (http://hbase.
 The Java API provides the most functionality.
  
 If users want to use HBase without Java, there are two main approaches for doing that: 
-One is the Thrift interface, the other way to access HBase is using the REST interface.
+One is the Thrift interface, the other way to access HBase is using the [REST] (http://hbase.apache.org/book.html#_rest) interface.
 
 This extension is a HBase REST Client Library for [Tcl] (http://tcl.tk).
 The library consists of a single [Tcl Module] (http://tcl.tk/man/tcl8.6/TclCmd/tm.htm#M9) file.
@@ -71,6 +71,6 @@ OK, now query again:
     $myhbase getValue "test" "row1"
 
 
-User should get "Not found" response. In last step, drop the table:
+User should get "Not found" response. In the last step, drop the table:
 
     $myhbase deleteTable "test"
