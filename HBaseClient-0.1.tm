@@ -144,7 +144,7 @@ oo::class create HBaseClient {
 
         set myurl "$server/$tableName/schema"
         set headerl [list Accept "text/xml" Content-Type "text/xml"]
-        set res [my send_request $myurl PUT $headerl 1 $content]
+        set res [my send_request $myurl POST $headerl 1 $content]
         return $res
     }
 
