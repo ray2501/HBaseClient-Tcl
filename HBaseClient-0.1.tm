@@ -40,7 +40,7 @@ package provide HBaseClient 0.1
 oo::class create HBaseClient {
     variable server
 
-    constructor {{SERVER http://localhost:8080/}} {
+    constructor {{SERVER http://localhost:8080}} {
         set server $SERVER
     }
 
