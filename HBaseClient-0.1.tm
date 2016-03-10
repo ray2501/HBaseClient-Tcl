@@ -190,15 +190,19 @@ oo::class create HBaseClient {
         set rowname [::base64::decode $rowname]
         lappend response $rowname
 
-        set node [$root selectNodes /CellSet/Row/Cell]
-        set column [$node getAttribute column]
-        set column [::base64::decode $column]
-        lappend response $column
-        set timestamp [$node getAttribute timestamp]
-        lappend response $timestamp
-        set value [[$node firstChild] data]
-        set value [::base64::decode $value]
-        lappend response $value
+        set nodeList [$root selectNodes /CellSet/Row/Cell]
+        foreach node $nodeList { 
+            set column_list [list]
+            set column [$node getAttribute column]
+            set column [::base64::decode $column]
+            lappend column_list $column
+            set timestamp [$node getAttribute timestamp]
+            lappend column_list $timestamp
+            set value [[$node firstChild] data]
+            set value [::base64::decode $value]
+            lappend column_list $value
+            lappend response $column_list 
+        }
 
         return $response
     }
