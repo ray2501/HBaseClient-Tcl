@@ -167,8 +167,10 @@ oo::class create HBaseClient {
     #
 
     method getValue {tableName rowName {colName ""} {qualifier ""}} {
-        if {[string length $colName] > 0 && [string length qualifier] > 0} {
+        if {[string length $colName] > 0 && [string length $qualifier] > 0} {
             set myurl "$server/$tableName/$rowName/$colName:$qualifier"
+        } elseif {[string length $colName] > 0 && [string length $qualifier] == 0} {
+            set myurl "$server/$tableName/$rowName/$colName"
         } else  {
             set myurl "$server/$tableName/$rowName"
         }
