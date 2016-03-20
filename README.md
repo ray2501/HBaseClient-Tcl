@@ -61,16 +61,19 @@ Get the values:
     $myhbase getValue "test" "row2"
     $myhbase getValue "test" "row3"
 
+Or more detail parameters:
+
+    $myhbase getValue "test" "row1" "cf" "a"
+
 Try to delete a value:
 
     $myhbase deleteValue "test" "row1" "cf" "a"
-
 
 OK, now query again:
 
     $myhbase getValue "test" "row1"
 
-
 User should get "Not found" response. In the last step, drop the table:
 
     $myhbase deleteTable "test"
+

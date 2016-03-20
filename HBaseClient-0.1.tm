@@ -166,8 +166,12 @@ oo::class create HBaseClient {
     # Get and put
     #
 
-    method getValue {tableName rowName} {
-        set myurl "$server/$tableName/$rowName"
+    method getValue {tableName rowName {colName ""} {qualifier ""}} {
+        if {[string length $colName] > 0 && [string length qualifier] > 0} {
+            set myurl "$server/$tableName/$rowName/$colName:$qualifier"
+        } else  {
+            set myurl "$server/$tableName/$rowName"
+        }
         set headerl [list Accept "text/xml"]
         set res [my send_request $myurl GET $headerl]
 
