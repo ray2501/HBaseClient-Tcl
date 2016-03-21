@@ -69,6 +69,10 @@ Try to delete a value:
 
     $myhbase deleteValue "test" "row1" "cf" "a"
 
+Or you can try to delete more values (delete an entire row):
+
+    $myhbase deleteValue "test" "row1"
+
 OK, now query again:
 
     $myhbase getValue "test" "row1"
