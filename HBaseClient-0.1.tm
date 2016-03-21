@@ -234,8 +234,14 @@ oo::class create HBaseClient {
         return $res
     }
 
-    method deleteValue {tableName rowName colName qualifier} {
-        set myurl "$server/$tableName/$rowName/$colName:$qualifier"        
+    method deleteValue {tableName rowName {colName ""} {qualifier ""}} {
+        if {[string length $colName] > 0 && [string length $qualifier] > 0} {
+            set myurl "$server/$tableName/$rowName/$colName:$qualifier"
+        } elseif {[string length $colName] > 0 && [string length $qualifier] == 0} {
+            set myurl "$server/$tableName/$rowName/$colName"
+        } else  {
+            set myurl "$server/$tableName/$rowName"
+        }     
         set headerl [list Content-Type "application/plain"]
         set res [my send_request $myurl DELETE $headerl 1]
         return $res
