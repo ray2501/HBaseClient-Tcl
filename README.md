@@ -30,6 +30,8 @@ The library has 1 TclOO class, HBaseClient.
 Example
 =====
 
+## A simple example
+
 Get HBase version:
 
     package require HBaseClient
@@ -54,6 +56,10 @@ Put some values to test:
     $myhbase putValue "test" "row1" "cf" "a" "value1"
     $myhbase putValue "test" "row2" "cf" "b" "value2"
     $myhbase putValue "test" "row3" "cf" "c" "value3"
+
+Do a stateless scan for our table:
+
+    $myhbase scanRow "test"
 
 Get the values:
 
@@ -81,3 +87,12 @@ User should get "Not found" response. In the last step, drop the table:
 
     $myhbase deleteTable "test"
 
+## HTTPS support
+
+If user enables HTTPS support, below is an example:
+
+    package require HBaseClient
+    set myhbase [HBaseClient new https://localhost:8080 1]
+
+Please notice, I use [TLS extension] (http://tls.sourceforge.net/) to add https support.
+So https support needs TLS extension.
