@@ -40,10 +40,12 @@ package provide HBaseClient 0.1
 oo::class create HBaseClient {
     variable server
     variable ssl_enabled
+    variable response_data
 
     constructor {{SERVER http://localhost:8080} {SSL_ENABLED 0}} {
         set server $SERVER
         set ssl_enabled $SSL_ENABLED
+        set response_data ""
 
         if {$ssl_enabled} {
             if {[catch {package require tls}]==0} {
@@ -57,7 +59,7 @@ oo::class create HBaseClient {
     destructor {
     }
 
-    method send_request {url method {headers ""} {needstate 0} {data ""}} {
+    method send_request {url method {headers ""} {data ""}} {
         variable tok
 
         if {[string length $data] < 1} {
@@ -72,11 +74,8 @@ oo::class create HBaseClient {
             }
         }
 
-        if {$needstate != 0} {
-            set res [http::status $tok]
-        } else {
-            set res [http::data $tok]
-        }
+        set res [http::status $tok]
+        set [namespace current]::response_data [http::data $tok]
 
         http::cleanup $tok
         return $res
@@ -87,26 +86,29 @@ oo::class create HBaseClient {
     # Cluster Information
     #
     method version {} {
+        set [namespace current]::response_data ""
         set myurl "$server/version/cluster"
         set headerl [list Content-Type "text/plain"]
         set res [my send_request $myurl GET $headerl]
-        return $res
+        return $response_data
     }
 
     method status {} {
+        set [namespace current]::response_data ""
         set myurl "$server/status/cluster"
         set headerl [list Content-Type "text/plain"]
         set res [my send_request $myurl GET $headerl]
-        return $res
+        return $response_data
     }
 
     method listTable {} {
+        set [namespace current]::response_data ""
         set myurl "$server/"
         set headerl [list Accept "text/xml" Content-Type "text/xml"]
         set res [my send_request $myurl GET $headerl]
         set response [list]
 
-        set XML $res
+        set XML $response_data
         set doc [dom parse $XML]
         set root [$doc documentElement]
         set nodeList [$root selectNodes /TableList/table]
@@ -124,15 +126,17 @@ oo::class create HBaseClient {
     # Table Information
     #
     method getTableSchema  {tableName} {
+        set [namespace current]::response_data ""
         set myurl "$server/$tableName/schema"
         set headerl [list Accept "text/xml" Content-Type "text/xml"]
         set res [my send_request $myurl GET $headerl]
-        return $res
+        return $response_data
     }
 
     method createTable {tableName COLUMN} {
         variable content
 
+        set [namespace current]::response_data ""
         set content "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         append content "<TableSchema name=\"$tableName\">"
         append content "  <ColumnSchema name=\"$COLUMN\" />"
@@ -140,13 +144,14 @@ oo::class create HBaseClient {
 
         set myurl "$server/$tableName/schema"
         set headerl [list Accept "text/xml" Content-Type "text/xml"]
-        set res [my send_request $myurl PUT $headerl 1 $content]
+        set res [my send_request $myurl PUT $headerl $content]
         return $res
     }
 
     method updateTable {tableName COLUMN} {
         variable content
 
+        set [namespace current]::response_data ""
         set content "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         append content "<TableSchema name=\"$tableName\">"
         append content "  <ColumnSchema name=\"$COLUMN\" />"
@@ -154,28 +159,31 @@ oo::class create HBaseClient {
 
         set myurl "$server/$tableName/schema"
         set headerl [list Accept "text/xml" Content-Type "text/xml"]
-        set res [my send_request $myurl POST $headerl 1 $content]
+        set res [my send_request $myurl POST $headerl $content]
         return $res
     }
 
     method deleteTable {tableName} {
+        set [namespace current]::response_data ""
         set myurl "$server/$tableName/schema"
         set headerl [list Content-Type "application/plain"]
-        set res [my send_request $myurl DELETE $headerl 1]
+        set res [my send_request $myurl DELETE $headerl]
         return $res
     }
 
     method getTableInfo {tableName} {
+        set [namespace current]::response_data ""
         set myurl "$server/$tableName/regions"
         set headerl [list Accept "text/xml" Content-Type "text/xml"]
         set res [my send_request $myurl GET $headerl]
-        return $res
+        return $response_data
     }
 
     #
     # Get and put
     #
     method getValue {tableName rowName {colName ""} {qualifier ""}} {
+        set [namespace current]::response_data ""
         if {[string length $colName] > 0 && [string length $qualifier] > 0} {
             set myurl "$server/$tableName/$rowName/$colName:$qualifier"
         } elseif {[string length $colName] > 0 && [string length $qualifier] == 0} {
@@ -186,18 +194,14 @@ oo::class create HBaseClient {
         set headerl [list Accept "text/xml"]
         set res [my send_request $myurl GET $headerl]
 
-        set response [list]
-
-        if {[string compare -nocase -length 9 $res {Not found}] == 0} {
-            lappend response $res
-            return $res
-        } elseif {[string compare -nocase -length 5 $res {error}] == 0} {
-            lappend response $res
-            return $res
+        if {[string compare -nocase -length 9 $response_data {Not found}] == 0} {
+            return $response_data
+        } elseif {[string compare -nocase -length 5 $response_data {error}] == 0} {
+            return $response_data
         }
 
         set response [list]
-        set XML $res
+        set XML $response_data
         set doc [dom parse $XML]
         set root [$doc documentElement]
         set node [$root selectNodes /CellSet/Row]
@@ -223,6 +227,7 @@ oo::class create HBaseClient {
     }
 
     method putValue {tableName rowName colName qualifier value} {
+        set [namespace current]::response_data ""
         set content "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         set row_encode [::base64::encode $rowName]
         append content "<CellSet><Row key=\"$row_encode\">"
@@ -239,7 +244,7 @@ oo::class create HBaseClient {
 
         set myurl "$server/$tableName/$rowName/$colName:$qualifier"
         set headerl [list Content-Type "text/xml"]
-        set res [my send_request $myurl PUT $headerl 1 $content]
+        set res [my send_request $myurl PUT $headerl $content]
         return $res
     }
 
@@ -247,6 +252,7 @@ oo::class create HBaseClient {
     # for row, column, or cell DELETE
     #
     method deleteValue {tableName rowName {colName ""} {qualifier ""}} {
+        set [namespace current]::response_data ""
         if {[string length $colName] > 0 && [string length $qualifier] > 0} {
             set myurl "$server/$tableName/$rowName/$colName:$qualifier"
         } elseif {[string length $colName] > 0 && [string length $qualifier] == 0} {
@@ -255,7 +261,7 @@ oo::class create HBaseClient {
             set myurl "$server/$tableName/$rowName"
         }
         set headerl [list Content-Type "application/plain"]
-        set res [my send_request $myurl DELETE $headerl 1]
+        set res [my send_request $myurl DELETE $headerl]
         return $res
     }
 
@@ -268,6 +274,7 @@ oo::class create HBaseClient {
     # Use stateless Scanner to get rows and columns info
     #
     method scanRow {tableName {row_prefix ""}} {
+        set [namespace current]::response_data ""
         if {[string length $row_prefix] > 0} {
             set myurl "$server/$tableName/$row_prefix*"
         } else  {
@@ -284,7 +291,7 @@ oo::class create HBaseClient {
         }
 
         set response [list]
-        set XML $res
+        set XML $response_data
         set doc [dom parse $XML]
         set root [$doc documentElement]
         set rowList [$root selectNodes /CellSet/Row]

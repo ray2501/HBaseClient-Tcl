@@ -13,7 +13,7 @@ The library consists of a single [Tcl Module] (http://tcl.tk/man/tcl8.6/TclCmd/t
 
 HBaseClient is using Tcl built-in package http to send request to Apache HBase REST server and get response.
 
-I only test this extension on Apache HBase standalone mode (Apache HBase 1.1.3 and Zookeeper 3.4.8,
+I only test this extension on Apache HBase standalone mode (Apache HBase 1.1.5 and Zookeeper 3.4.8,
 no security settings).
 
 User needs to start Aapache HBase REST Server daemon.
