@@ -2,14 +2,14 @@
 HBaseClient
 =====
 
-There are various ways to access and interact with [Apache HBase] (http://hbase.apache.org). 
+There are various ways to access and interact with [Apache HBase](http://hbase.apache.org). 
 The Java API provides the most functionality.
  
 If users want to use HBase without Java, there are two main approaches for doing that: 
-One is the Thrift interface, the other way to access HBase is using the [REST] (http://hbase.apache.org/book.html#_rest) interface.
+One is the Thrift interface, the other way to access HBase is using the [REST](http://hbase.apache.org/book.html#_rest) interface.
 
-This extension is a HBase REST Client Library for [Tcl] (http://tcl.tk).
-The library consists of a single [Tcl Module] (http://tcl.tk/man/tcl8.6/TclCmd/tm.htm#M9) file.
+This extension is a HBase REST Client Library for [Tcl](http://tcl.tk).
+The library consists of a single [Tcl Module](http://tcl.tk/man/tcl8.6/TclCmd/tm.htm#M9) file.
 
 HBaseClient is using Tcl built-in package http to send request to Apache HBase REST server and get response.
 
@@ -94,5 +94,5 @@ If user enables HTTPS support, below is an example:
     package require HBaseClient
     set myhbase [HBaseClient new https://localhost:8080 1]
 
-Please notice, I use [TLS extension] (http://tls.sourceforge.net/) to add https support.
+Please notice, I use [TLS extension](http://tls.sourceforge.net/) to add https support.
 So https support needs TLS extension.
