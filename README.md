@@ -94,5 +94,5 @@ If user enables HTTPS support, below is an example:
     package require HBaseClient
     set myhbase [HBaseClient new https://localhost:8080 1]
 
-Please notice, I use [TLS extension](http://tls.sourceforge.net/) to add https support.
+Please notice, I use [TLS extension](http://core.tcl.tk/tcltls/index) to add https support.
 So https support needs TLS extension.
