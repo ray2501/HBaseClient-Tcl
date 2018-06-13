@@ -71,6 +71,7 @@ oo::class create HBaseClient {
             }
 
             set res [http::status $tok]
+            set ncode [::http::ncode $tok]
             set [namespace current]::response_data [http::data $tok]
         } on error {em} {
             return "error"
@@ -78,6 +79,10 @@ oo::class create HBaseClient {
             if {[info exists tok]==1} {
                 http::cleanup $tok
             }
+        }
+
+        if {$ncode == 500 || $ncode == 404} {
+            return "error"
         }
 
         return $res
@@ -92,6 +97,9 @@ oo::class create HBaseClient {
         set myurl "$server/version/cluster"
         set headerl [list Content-Type "text/plain"]
         set res [my send_request $myurl GET $headerl]
+        if {[string compare $res "ok"]!=0} {
+            return "error"
+        }
         return $response_data
     }
 
@@ -100,6 +108,9 @@ oo::class create HBaseClient {
         set myurl "$server/status/cluster"
         set headerl [list Content-Type "text/plain"]
         set res [my send_request $myurl GET $headerl]
+        if {[string compare $res "ok"]!=0} {
+            return "error"
+        }
         return $response_data
     }
 
@@ -108,6 +119,11 @@ oo::class create HBaseClient {
         set myurl "$server/"
         set headerl [list Accept "text/xml" Content-Type "text/xml"]
         set res [my send_request $myurl GET $headerl]
+
+        if {[string compare $res "ok"]!=0} {
+            error "error"
+        }
+
         set response [list]
 
         set XML $response_data
@@ -132,6 +148,11 @@ oo::class create HBaseClient {
         set myurl "$server/$tableName/schema"
         set headerl [list Accept "text/xml" Content-Type "text/xml"]
         set res [my send_request $myurl GET $headerl]
+
+        if {[string compare $res "ok"]!=0} {
+            return "error"
+        }
+
         return $response_data
     }
 
@@ -178,6 +199,9 @@ oo::class create HBaseClient {
         set myurl "$server/$tableName/regions"
         set headerl [list Accept "text/xml" Content-Type "text/xml"]
         set res [my send_request $myurl GET $headerl]
+        if {[string compare $res "ok"]!=0} {
+            return "error"
+        }
         return $response_data
     }
 
