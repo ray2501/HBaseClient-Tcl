@@ -2,7 +2,7 @@
 #
 #	HBase REST Client Library for Tcl
 #
-# Copyright (C) 2016 Danilo Chang <ray2501@gmail.com>
+# Copyright (C) 2016-2018 Danilo Chang <ray2501@gmail.com>
 #
 # Retcltribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
