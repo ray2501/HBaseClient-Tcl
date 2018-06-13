@@ -62,22 +62,24 @@ oo::class create HBaseClient {
     method send_request {url method {headers ""} {data ""}} {
         variable tok
 
-        if {[string length $data] < 1} {
-            if {[catch {set tok [http::geturl $url -method $method \
-                -headers $headers]}]} {
-                return "error"
+        try {
+            if {[string length $data] < 1} {
+                set tok [http::geturl $url -method $method -headers $headers]
+            } else {
+                set tok [http::geturl $url -method $method \
+                    -headers $headers -query $data]
             }
-        } else {
-            if {[catch {set tok [http::geturl $url -method $method \
-                -headers $headers -query $data]}]} {
-                return "error"
+
+            set res [http::status $tok]
+            set [namespace current]::response_data [http::data $tok]
+        } on error {em} {
+            return "error"
+        } finally {
+            if {[info exists tok]==1} {
+                http::cleanup $tok
             }
         }
 
-        set res [http::status $tok]
-        set [namespace current]::response_data [http::data $tok]
-
-        http::cleanup $tok
         return $res
     }
 
