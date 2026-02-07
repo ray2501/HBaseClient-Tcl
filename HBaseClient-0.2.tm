@@ -34,7 +34,7 @@ package require http
 package require base64
 package require tdom
 
-package provide HBaseClient 0.1
+package provide HBaseClient 0.2
 
 
 oo::class create HBaseClient {
@@ -49,7 +49,10 @@ oo::class create HBaseClient {
 
         if {$ssl_enabled} {
             if {[catch {package require tls}]==0} {
-                http::register https 443 [list ::tls::socket -ssl3 0 -ssl2 0 -tls1 1]
+                set protocol "http/1.1"
+                http::register https 443 [list ::tls::socket -autoservername 1 \
+                                          -require 0 -alpn \
+                                          [list [string tolower $protocol]]]
             } else {
                 error "SSL_ENABLED needs package tls..."
             }

@@ -2,19 +2,20 @@
 HBaseClient
 =====
 
-There are various ways to access and interact with [Apache HBase](http://hbase.apache.org). 
+There are various ways to access and interact with [Apache HBase](https://hbase.apache.org). 
 The Java API provides the most functionality.
  
 If users want to use HBase without Java, there are two main approaches for doing that: 
-One is the Thrift interface, the other way to access HBase is using the [REST](http://hbase.apache.org/book.html#_rest) interface.
+One is the Thrift interface, the other way to access HBase is using the
+[REST](https://hbase.apache.org/book.html#_rest) interface.
 
-This extension is a HBase REST Client Library for [Tcl](http://tcl.tk).
-The library consists of a single [Tcl Module](http://tcl.tk/man/tcl8.6/TclCmd/tm.htm#M9) file.
+This extension is a HBase REST Client Library for [Tcl](https://www.tcl-lang.org/).
+The library consists of a single [Tcl Module](https://www.tcl-lang.org/man/tcl8.6/TclCmd/tm.htm) file.
 
 HBaseClient is using Tcl built-in package http to send request to Apache HBase REST server and get response.
 
-I only test this extension on Apache HBase standalone mode (Apache HBase 1.1.5 and Zookeeper 3.4.8,
-no security settings).
+I only test this extension on Apache HBase standalone mode (Apache HBase 2.6.4, Zookeeper 3.9.4
+and OpenJDK 21, no security settings).
 
 User needs to start Aapache HBase REST Server daemon.
 
@@ -32,10 +33,15 @@ Example
 
 ## A simple example
 
+Notice: The REST interface default port is 8080. However, in Apache ZooKeeper
+versions 3.5.0 and later, port 8080 is the default port for the built-in
+AdminServer, which provides an HTTP interface for command access.
+So I pick up HBase REST interface port to 8090.
+
 Get HBase version:
 
     package require HBaseClient
-    set myhbase [HBaseClient new http://localhost:8080]
+    set myhbase [HBaseClient new http://localhost:8090]
 
     $myhbase version
 
@@ -92,7 +98,7 @@ User should get "Not found" response. In the last step, drop the table:
 If user enables HTTPS support, below is an example:
 
     package require HBaseClient
-    set myhbase [HBaseClient new https://localhost:8080 1]
+    set myhbase [HBaseClient new https://localhost:8090 1]
 
 Please notice, I use [TLS extension](http://core.tcl.tk/tcltls/index) to add https support.
 So https support needs TLS extension.
